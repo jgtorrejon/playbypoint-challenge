@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import { Text, View, FlatList, ActivityIndicator } from 'react-native';
+import { Text, FlatList, ActivityIndicator, SafeAreaView, StatusBar } from 'react-native';
 import { useQuery } from '@apollo/client';
 import GET_CHARACTERS from '@/api/getCharacters';
 import CharacterItem from '@/components/CharacterItem';
+import Loader from '@/components/Loader';
+import { COLORS } from '@/constants/theme';
 
 export default function HomePage() {
   const [characters, setCharacters] = useState([]);
@@ -33,11 +35,12 @@ export default function HomePage() {
     }
   };
 
-  if (loading && page === 1) return <Text>Loading...</Text>;
+  if (loading && page === 1) return <Loader />;
   if (error) return <Text>Error: {error.message}</Text>;
 
   return (
-    <View>
+    <SafeAreaView>
+      <StatusBar/>
       <FlatList
         data={characters}
         keyExtractor={(item) => item.id}
@@ -53,10 +56,10 @@ export default function HomePage() {
         onEndReachedThreshold={0.5}
         ListFooterComponent={
           loadingMore ? (
-            <ActivityIndicator size="large" color="#0000ff" />
+            <ActivityIndicator size="large" color={COLORS.primary} />
           ) : null
         }
       />
-    </View>
+    </SafeAreaView>
   );
 }

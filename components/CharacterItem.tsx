@@ -1,4 +1,4 @@
-import { View, StyleSheet, Text, Image } from "react-native";
+import { View, StyleSheet, Text, Image, Pressable } from "react-native";
 import { Link } from "expo-router";
 
 type Props = {
@@ -10,18 +10,20 @@ type Props = {
 
 export default function CharacterItem({ id, name, specie, image }: Props) {
   return (
-    <Link 
-      style={styles.card}
+    <Link
       href={{
         pathname: '/details',
         params: { id: id, name: name }
       }}
+      asChild
     >
-      <Image style={styles.image} source={{ uri: image }} />
-      <View style={styles.textContainer}>
-        <Text style={styles.nameText}>{name}</Text>
-        <Text style={styles.specieText}>{specie}</Text>
-      </View>
+      <Pressable style={styles.card}>
+        <Image style={styles.image} source={{ uri: image }} />
+        <View style={styles.textContainer}>
+          <Text style={styles.nameText}>{name}</Text>
+          <Text style={styles.specieText}>{specie}</Text>
+        </View>
+      </Pressable>
     </Link>
   );
 }

@@ -1,7 +1,9 @@
-import { View, Text, StyleSheet, Image, FlatList } from "react-native";
-import { useLocalSearchParams, Link } from 'expo-router';
+import { View, Text, StyleSheet, Image, ScrollView } from "react-native";
+import { useLocalSearchParams } from 'expo-router';
 import { useQuery } from '@apollo/client';
 import GET_CHARACTER from '@/api/getCharacter';
+import Loader from '@/components/Loader';
+import EpisodeItem from '@/components/EpisodeItem';
 
 export default function DetailsScreen() {
   const params = useLocalSearchParams();
@@ -10,97 +12,74 @@ export default function DetailsScreen() {
     variables: { id: params.id },
   });
 
-  if (loading) return <Text>Loading...</Text>;
+  if (loading) return <Loader />;
   if (error) return <Text>Error: {error.message}</Text>;
 
   return (
-    <View style={styles.card}>
-      <View style={styles.header}>
-        <Image style={styles.image} source={{ uri: data.character.image }} />
-        <View style={styles.headerText}>
-          <Text style={styles.nameText}>{data.character.name}</Text>
-          <Text style={styles.infoText}>{data.character.species} - {data.character.gender} - {data.character.status}</Text>
-          <Text style={styles.locationText}>Location: {data.character.location.name}</Text>
+    <ScrollView contentContainerStyle={styles.scrollContainer}>
+      <View style={styles.card}>
+        <View style={styles.header}>
+          <Image style={styles.image} source={{ uri: data.character.image }} />
+          <View style={styles.headerText}>
+            <Text style={styles.nameText}>{data.character.name}</Text>
+            <Text style={styles.infoText}>{data.character.species} - {data.character.gender} - {data.character.status}</Text>
+            <Text style={styles.locationText}>Location: {data.character.location.name}</Text>
+          </View>
+        </View>
+        <View style={styles.episodeContainer}>
+          <Text style={styles.episodeHeader}>Episodes:</Text>
+          {data.character.episode.map((item) => (
+            <EpisodeItem id={item.id} name={item.name} episode={item.episode} air_date={item.air_date} />
+          ))}
         </View>
       </View>
-      <View style={styles.episodeContainer}>
-        <Text style={styles.episodeHeader}>Episodes:</Text>
-        <FlatList
-          data={data.character.episode}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
-            <Link style={styles.episodeItem} href={{ pathname: "/episodes", params: { id: item.id } }}>
-              <Text style={styles.episodeName}>{item.episode}: {item.name}</Text>
-              <Text style={styles.episodeDate}>{item.air_date}</Text>
-            </Link>
-          )}
-        />
-      </View>
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
+  scrollContainer: {
+    flexGrow: 1,
+    padding: 16,
+  },
   card: {
-    backgroundColor: "#fff",
-    borderRadius: 10,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 4,
-    margin: 10,
-    padding: 15,
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    padding: 16,
+    marginBottom: 16,
   },
   header: {
-    flexDirection: "row",
-    marginBottom: 15,
+    flexDirection: 'row',
+    marginBottom: 16,
   },
   image: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    marginRight: 15,
+    width: 100,
+    height: 100,
+    borderRadius: 8,
+    marginRight: 16,
   },
   headerText: {
     flex: 1,
-    justifyContent: "center",
+    justifyContent: 'center',
   },
   nameText: {
     fontSize: 20,
-    fontWeight: "bold",
-    color: "#333",
+    fontWeight: 'bold',
   },
   infoText: {
-    fontSize: 14,
-    color: "#666",
-    marginVertical: 5,
+    fontSize: 16,
+    color: '#555',
   },
   locationText: {
     fontSize: 14,
-    color: "#666",
+    color: '#888',
   },
   episodeContainer: {
-    marginTop: 10,
+    marginTop: 16,
   },
   episodeHeader: {
     fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 10,
-    color: "#333",
-  },
-  episodeItem: {
-    marginBottom: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: "#ddd",
-    paddingBottom: 5,
-  },
-  episodeName: {
-    fontSize: 16,
-    color: "#333",
-  },
-  episodeDate: {
-    fontSize: 14,
-    color: "#666",
-  },
+    fontWeight: 'bold',
+    marginBottom: 8,
+  }
 });

@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet, Image, FlatList } from "react-native";
-import { useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams, Link } from 'expo-router';
 import { useQuery } from '@apollo/client';
 import GET_CHARACTER from '@/api/getCharacter';
 
@@ -12,7 +12,6 @@ export default function DetailsScreen() {
 
   if (loading) return <Text>Loading...</Text>;
   if (error) return <Text>Error: {error.message}</Text>;
-
 
   return (
     <View style={styles.card}>
@@ -30,10 +29,10 @@ export default function DetailsScreen() {
           data={data.character.episode}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
-            <View style={styles.episodeItem}>
+            <Link style={styles.episodeItem} href={{ pathname: "/episodes", params: { id: item.id } }}>
               <Text style={styles.episodeName}>{item.episode}: {item.name}</Text>
               <Text style={styles.episodeDate}>{item.air_date}</Text>
-            </View>
+            </Link>
           )}
         />
       </View>

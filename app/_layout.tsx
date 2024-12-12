@@ -20,8 +20,9 @@ export default function RootLayout() {
           headerTitle: 'Details'
         }}/>
         <Stack.Screen name="episodes" options={{
-          presentation: 'modal',
+          presentation: 'modal'
         }}/>
+        <Stack.Screen name="filters" />
       </Stack>
     </ApolloProvider>
   );

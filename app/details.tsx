@@ -22,14 +22,22 @@ export default function DetailsScreen() {
           <Image style={styles.image} source={{ uri: data.character.image }} />
           <View style={styles.headerText}>
             <Text style={styles.nameText}>{data.character.name}</Text>
-            <Text style={styles.infoText}>{data.character.species} - {data.character.gender} - {data.character.status}</Text>
+            <Text style={styles.infoText}>
+              {data.character.species} - {data.character.gender} - {data.character.status}
+            </Text>
             <Text style={styles.locationText}>Location: {data.character.location.name}</Text>
           </View>
         </View>
         <View style={styles.episodeContainer}>
           <Text style={styles.episodeHeader}>Episodes:</Text>
           {data.character.episode.map((item) => (
-            <EpisodeItem id={item.id} name={item.name} episode={item.episode} air_date={item.air_date} />
+            <EpisodeItem
+              key={item.id}
+              id={item.id}
+              name={item.name}
+              episode={item.episode}
+              air_date={item.air_date}
+            />
           ))}
         </View>
       </View>

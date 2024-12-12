@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, FlatList, Image } from "react-native";
 import { useQuery } from "@apollo/client";
 import { useLocalSearchParams } from 'expo-router';
 import GET_EPISODE_BY_ID from '@/api/getEpisodeById';
+import Loader from '@/components/Loader';
 
 export default function EpisodeDetails() {
   const params = useLocalSearchParams();
@@ -11,7 +12,7 @@ export default function EpisodeDetails() {
     variables: { id: params.id },
   });
 
-  if (loading) return <Text>Loading...</Text>;
+  if (loading) return <Loader />;
   if (error) return <Text>Error: {error.message}</Text>;
 
   const { episode } = data;

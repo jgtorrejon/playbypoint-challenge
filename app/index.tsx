@@ -4,6 +4,7 @@ import { useQuery } from '@apollo/client';
 import GET_CHARACTERS from '@/api/getCharacters';
 import CharacterItem from '@/components/CharacterItem';
 import Loader from '@/components/Loader';
+import SearchBar from '@/components/SearchBar';
 import { COLORS } from '@/constants/theme';
 
 export default function HomePage() {
@@ -28,7 +29,7 @@ export default function HomePage() {
         variables: { page: nextPage },
       });
 
-      setCharacters((prev) => [...prev, ...newData.characters.results]);
+      setCharacters((prev):[] => [...prev, ...newData.characters.results]);
       setPage(nextPage);
     } finally {
       setLoadingMore(false);
@@ -41,6 +42,9 @@ export default function HomePage() {
   return (
     <SafeAreaView>
       <StatusBar/>
+
+      <SearchBar onSearch={() => console.log('search')}/>
+
       <FlatList
         data={characters}
         keyExtractor={(item) => item.id}

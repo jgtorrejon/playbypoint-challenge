@@ -1,37 +1,62 @@
-import React from 'react';
-import { Text, View } from 'react-native';
-import { useQuery, gql } from '@apollo/client';
-
-const GET_USERS = gql`
-  query {
-    characters(page: 2, filter: { name: "rick" }) {
-      info {
-        count
-      }
-      results {
-        name
-      }
-    }
-    location(id: 1) {
-      id
-    }
-    episodesByIds(ids: [1, 2]) {
-      id
-    }
-  }
-`;
+import React, { useState } from 'react';
+import { Text, View, FlatList, ActivityIndicator } from 'react-native';
+import { useQuery } from '@apollo/client';
+import GET_CHARACTERS from '@/api/getCharacters';
+import CharacterItem from '@/components/CharacterItem';
 
 export default function HomePage() {
-  const { loading, error, data } = useQuery(GET_USERS);
+  const [characters, setCharacters] = useState([]);
+  const [page, setPage] = useState(1);
+  const [loadingMore, setLoadingMore] = useState(false);
 
-  if (loading) return <Text>Loading...</Text>;
+  const { loading, error, data, fetchMore } = useQuery(GET_CHARACTERS, {
+    variables: { page: 1 },
+    onCompleted: (data) => {
+      setCharacters(data.characters.results);
+    },
+  });
+
+  const loadMore = async () => {
+    if (loadingMore || !data?.characters.info.next) return;
+    setLoadingMore(true);
+
+    try {
+      const nextPage = page + 1;
+      const { data: newData } = await fetchMore({
+        variables: { page: nextPage },
+      });
+
+      setCharacters((prev) => [...prev, ...newData.characters.results]);
+      setPage(nextPage);
+    } finally {
+      setLoadingMore(false);
+    }
+  };
+
+  if (loading && page === 1) return <Text>Loading...</Text>;
   if (error) return <Text>Error: {error.message}</Text>;
 
   return (
     <View>
-      {data.characters.results.map((user) => (
-        <Text key={user.id}>{user.name}</Text>
-      ))}
+      <FlatList
+        data={characters}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <CharacterItem
+            id={item.id}
+            name={item.name}
+            specie={item.species}
+            image={item.image}
+          />
+        )}
+        onEndReached={loadMore}
+        onEndReachedThreshold={0.5}
+        ListFooterComponent={
+          loadingMore ? (
+            <ActivityIndicator size="large" color="#0000ff" />
+          ) : null
+        }
+      />
     </View>
   );
 }

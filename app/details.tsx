@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet, Image, FlatList } from "react-native";
-import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
 import { useQuery } from '@apollo/client';
 import GET_CHARACTER from '@/api/getCharacter';
 

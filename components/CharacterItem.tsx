@@ -2,10 +2,10 @@ import { View, StyleSheet, Text, Image } from "react-native";
 import { Link } from "expo-router";
 
 type Props = {
-  id: String;
-  name: String;
-  specie: String;
-  image: String;
+  id: string;
+  name: string;
+  specie: string;
+  image: string;
 };
 
 export default function CharacterItem({ id, name, specie, image }: Props) {

@@ -24,3 +24,9 @@ npm start
 ## Screenshots
  
 You can see some screenshots on the /screenshots folder.
+
+
+## About white label deployment
+[Video 1](https://www.youtube.com/watch?v=rD2C23i2E0A&list=LL&index=1)
+
+[Video 2](https://www.youtube.com/watch?v=M0Y01qrXQHo)

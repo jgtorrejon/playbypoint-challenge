@@ -1,0 +1,51 @@
+name: Build Android App and upload to Firebase App Distribution
+
+on:
+  workflow_call:
+    inputs:
+      env:
+        required: true
+        type: string
+      message:
+        required: true
+        type: string
+    secrets:
+      github-token:
+        required: true
+
+jobs:
+  build-and-upload-android-beta:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Authenticate with private NPM package
+        run: |
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.github-token }}" > ~/.npmrc
+          echo "@playbypoint:registry=https://npm.pkg.github.com/" >> ~/.npmrc
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.0.4'
+      - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16.18.0'
+          cache: 'npm'
+      - run: npm ci
+      - name: Install fastlane bundler dependencies
+        run: |
+          cd android
+          bundle install
+      - name: Install playbypoint-cli
+        run: npm i -g @playbypoint/playbypoint-cli@latest
+      - name: Log in vault
+        run: playbypoint vault-github-login ${{ secrets.github-token }}
+      - name: Download environment variables
+        run: npm run env:${{ inputs.env }}
+      - name: Build and deploy to App distribution
+        run: |
+          cd android
+          bundle exec fastlane beta message:${{ inputs.message }}
+    env:
+      AP_GITHUB_TOKEN: ${{secrets.github-token}}

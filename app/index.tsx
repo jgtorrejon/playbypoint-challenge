@@ -29,6 +29,7 @@ export default function HomePage() {
         <Loader />
       ) : (
         <FlatList
+          testID='characters-list'
           data={characters}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (

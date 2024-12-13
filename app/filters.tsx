@@ -1,26 +1,22 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { Link, router } from 'expo-router';
 import {Picker} from '@react-native-picker/picker';
+import { useFilters } from '@/context/FilterContext';
 
-const FilterPage = ({ onApplyFilters }) => {
-  const [name, setName] = useState("");
-  const [species, setSpecies] = useState("All");
-  const [status, setStatus] = useState("All");
+const FilterPage = () => {
+  const { filters, setFilters } = useFilters();
+
+  const [status, setStatus] = useState(filters.status);
+  const [species, setSpecies] = useState(filters.species);
 
   const handleApplyFilters = () => {
-    const filters = {
-      name,
-      species: species === "All" ? null : species,
-      status: status === "All" ? null : status,
+    const newFilters = {
+      species: species === "All" ? '' : species,
+      status: status === "All" ? '' : status,
     };
-    onApplyFilters(filters);
-  };
-
-  const resetFilters = () => {
-    setName("");
-    setSpecies("All");
-    setStatus("All");
-    onApplyFilters({ name: "", species: null, status: null }); // Reset filters
+    setFilters(newFilters);
+    router.navigate('../');
   };
 
   return (
@@ -35,8 +31,13 @@ const FilterPage = ({ onApplyFilters }) => {
         >
           <Picker.Item label="All" value="All" />
           <Picker.Item label="Human" value="Human" />
+          <Picker.Item label="Animal" value="Animal" />
           <Picker.Item label="Alien" value="Alien" />
-          <Picker.Item label="Other" value="Other" />
+          <Picker.Item label="Humanoid" value="Humanoid" />
+          <Picker.Item label="Robot" value="Robot" />
+          <Picker.Item label="Mythological Creature" value="Mythological Creature" />
+          <Picker.Item label="Disease" value="Disease" />
+          <Picker.Item label="Cronenberg" value="Cronenberg" />
         </Picker>
       </View>
 
@@ -60,9 +61,11 @@ const FilterPage = ({ onApplyFilters }) => {
         <TouchableOpacity style={styles.button} onPress={handleApplyFilters}>
           <Text style={styles.buttonText}>Apply Filters</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.resetButton} onPress={resetFilters}>
-          <Text style={styles.buttonText}>Reset Filters</Text>
-        </TouchableOpacity>
+        <Link href='../' asChild>
+          <TouchableOpacity style={styles.resetButton}>
+            <Text style={styles.buttonText}>Cancel</Text>
+          </TouchableOpacity>
+        </Link>
       </View>
     </View>
   );
@@ -107,7 +110,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   resetButton: {
-    backgroundColor: "#FF5C5C",
+    backgroundColor: "#778da9",
     padding: 10,
     borderRadius: 5,
     flex: 1,
